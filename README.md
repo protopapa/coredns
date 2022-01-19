@@ -55,7 +55,7 @@ out-of-tree plugins.
 To compile CoreDNS, we assume you have a working Go setup. See various tutorials if you don’t have
 that already configured.
 
-First, make sure your golang version is 1.12 or higher as `go mod` support is needed.
+First, make sure your golang version is 1.16 or higher as `go mod` support and other api is needed.
 See [here](https://github.com/golang/go/wiki/Modules) for `go mod` details.
 Then, check out the project and run `make` to compile the binary:
 
@@ -87,7 +87,7 @@ and starts listening on port 53 (override with `-dns.port`), it should show the 
 ~~~ txt
 .:53
 CoreDNS-1.6.6
-linux/amd64, go1.13.5, aa8c32
+linux/amd64, go1.16.10, aa8c32
 ~~~
 
 The following could be used to query the CoreDNS server that is running now:
@@ -201,8 +201,15 @@ https://example.org {
     tls mycert mykey
 }
 ~~~
+in this setup, the CoreDNS will be responsible for TLS termination
 
-Note that you must have the *tls* plugin configured as DoH requires that to be setup.
+you can also start DNS server serving DoH without TLS termination (plain HTTP), but beware that in such scenario there has to be some kind
+of TLS termination proxy before CoreDNS instance, which forwards DNS requests otherwise clients will not be able to communicate via DoH with the server
+~~~ corefile
+https://example.org {
+    whoami
+}
+~~~
 
 Specifying ports works in the same way:
 
